@@ -1,0 +1,124 @@
+<div class="dashboard-page">
+  <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+  <div class="dashboard-grid" *ngIf="!isLoading">
+    <!-- Summary Cards Row -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Monitored Directories</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ dashboardSummary?.totalMonitoredDirectories || 0 }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Total Files</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ dashboardSummary?.totalMonitoredFiles || 0 }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Modified Today</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ dashboardSummary?.modifiedFilesToday || 0 }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Added Today</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ dashboardSummary?.addedFilesToday || 0 }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>File Changes Over Time</span>
+          </div>
+          <div class="card-body">
+            <canvas baseChart [data]="fileChangesData" [options]="fileChangesOptions"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Authentication Success vs Failures</span>
+          </div>
+          <div class="card-body">
+            <canvas baseChart [data]="authData" [options]="authOptions"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Metrics Row -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Active Threats</span>
+          </div>
+          <div class="card-body">
+            <h3 [ngClass]="getSeverityClass(dashboardSummary?.activeThreats)">
+              {{ dashboardSummary?.activeThreats || 0 }}
+            </h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Critical Alerts</span>
+          </div>
+          <div class="card-body">
+            <h3 [ngClass]="getSeverityClass(dashboardSummary?.criticalAlerts)">
+              {{ dashboardSummary?.criticalAlerts || 0 }}
+            </h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Last Scan</span>
+          </div>
+          <div class="card-body">
+            <p *ngIf="dashboardSummary?.lastSuccessfulScan">
+              {{ dashboardSummary.lastSuccessfulScan | timestamp }}
+            </p>
+            <p *ngIf="!dashboardSummary?.lastSuccessfulScan">Never</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card">
+          <div class="card-header">
+            <span>Log Events</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ dashboardSummary?.totalLogEvents || 0 }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

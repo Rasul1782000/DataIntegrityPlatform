@@ -1,0 +1,1266 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\Rasul\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend
+configfile: pyproject.toml
+plugins: anyio-4.11.0, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 12 items
+
+tests/test_authentication.py::test_login_and_authenticated_current_user FAILED [  8%]
+tests/test_authentication.py::test_login_with_remember_me FAILED         [ 16%]
+tests/test_authentication.py::test_invalid_login_does_not_disclose_account_details FAILED [ 25%]
+tests/test_authentication.py::test_invalid_login_for_nonexistent_user FAILED [ 33%]
+tests/test_authentication.py::test_repeated_failed_login_temporarily_locks_account FAILED [ 41%]
+tests/test_authentication.py::test_refresh_rotates_and_old_token_cannot_be_reused FAILED [ 50%]
+tests/test_authentication.py::test_logout_revokes_refresh_token FAILED   [ 58%]
+tests/test_authentication.py::test_logout_with_invalid_token PASSED      [ 66%]
+tests/test_authentication.py::test_health_checks PASSED                  [ 75%]
+tests/test_authentication.py::test_login_lockout_progression FAILED      [ 83%]
+tests/test_authentication.py::test_logout_then_refresh_rejected FAILED   [ 91%]
+tests/test_authentication.py::test_login_after_lockout PASSED            [100%]
+
+================================== FAILURES ===================================
+__________________ test_login_and_authenticated_current_user __________________
+
+client = <starlette.testclient.TestClient object at 0x00000289926C86E0>
+
+    def test_login_and_authenticated_current_user(client: TestClient) -> None:
+        """Test basic login and me query."""
+>       tokens = login(client)
+                 ^^^^^^^^^^^^^
+
+tests\test_authentication.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x00000289926C86E0>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "rememberMe": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "'GraphQLContext' object has no attribute 'service'", 'locations': [{'line': 3, 'column': 11}], 'path': ['login']}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:36: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:48,906 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:48,910 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+_________________________ test_login_with_remember_me _________________________
+
+client = <starlette.testclient.TestClient object at 0x00000289927B1E50>
+
+    def test_login_with_remember_me(client: TestClient) -> None:
+        """Test login with remember_me flag."""
+>       tokens = login(client, remember_me=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_authentication.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x00000289927B1E50>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = True
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "rememberMe": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "'GraphQLContext' object has no attribute 'service'", 'locations': [{'line': 3, 'column': 11}], 'path': ['login']}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:36: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:49,443 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:49,447 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+____________ test_invalid_login_does_not_disclose_account_details _____________
+
+client = <starlette.testclient.TestClient object at 0x00000289928E2350>
+
+    def test_invalid_login_does_not_disclose_account_details(client: TestClient) -> None:
+        """Test that invalid login gives generic error regardless of user existence."""
+        response = graphql(
+            client,
+            """
+            mutation {
+              login(input: {username: "testadmin", password: "wrong-password"}) {
+                accessToken
+              }
+            }
+            """,
+        )
+        assert response.status_code == 200
+>       assert response.json()["errors"][0]["message"] == "Invalid username or password."
+E       assert "'GraphQLCont...ute 'service'" == 'Invalid user... or password.'
+E         
+E         - Invalid username or password.
+E         + 'GraphQLContext' object has no attribute 'service'
+
+tests\test_authentication.py:81: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:49,719 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation {
+3 |           login(input: {username: "testadmin", password: "wrong-password"}) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:49,723 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation {
+3 |           login(input: {username: "testadmin", password: "wrong-password"}) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+___________________ test_invalid_login_for_nonexistent_user ___________________
+
+client = <starlette.testclient.TestClient object at 0x00000289928DF5C0>
+
+    def test_invalid_login_for_nonexistent_user(client: TestClient) -> None:
+        """Test login with nonexistent user gives same error (no account enumeration)."""
+        response = graphql(
+            client,
+            """
+            mutation {
+              login(input: {username: "nonexistent_user_12345", password: "any-password"}) {
+                accessToken
+              }
+            }
+            """,
+        )
+        assert response.status_code == 200
+>       assert response.json()["errors"][0]["message"] == "Invalid username or password."
+E       assert "'GraphQLCont...ute 'service'" == 'Invalid user... or password.'
+E         
+E         - Invalid username or password.
+E         + 'GraphQLContext' object has no attribute 'service'
+
+tests\test_authentication.py:97: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:50,037 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation {
+3 |           login(input: {username: "nonexistent_user_12345", password: "any-password"}) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:50,041 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation {
+3 |           login(input: {username: "nonexistent_user_12345", password: "any-password"}) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+____________ test_repeated_failed_login_temporarily_locks_account _____________
+
+client = <starlette.testclient.TestClient object at 0x00000289929750F0>
+
+    def test_repeated_failed_login_temporarily_locks_account(client: TestClient) -> None:
+        """Test account lockout after max failed attempts."""
+        mutation = """
+        mutation {
+          login(input: {username: "testadmin", password: "wrong-password"}) {
+            accessToken
+          }
+        }
+        """
+    
+        # Attempt 5 failed logins (max failed attempts)
+        for _ in range(5):
+            response = graphql(client, mutation)
+>           assert response.json()["errors"][0]["message"] == "Invalid username or password."
+E           assert "'GraphQLCont...ute 'service'" == 'Invalid user... or password.'
+E             
+E             - Invalid username or password.
+E             + 'GraphQLContext' object has no attribute 'service'
+
+tests\test_authentication.py:113: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:50,371 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:7
+2 |     mutation {
+3 |       login(input: {username: "testadmin", password: "wrong-password"}) {
+  |       ^
+4 |         accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:50,376 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:7
+2 |     mutation {
+3 |       login(input: {username: "testadmin", password: "wrong-password"}) {
+  |       ^
+4 |         accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+_____________ test_refresh_rotates_and_old_token_cannot_be_reused _____________
+
+client = <starlette.testclient.TestClient object at 0x00000289928D7770>
+
+    def test_refresh_rotates_and_old_token_cannot_be_reused(client: TestClient) -> None:
+        """Test that refresh token rotation works and old tokens are invalidated."""
+>       initial = login(client)
+                  ^^^^^^^^^^^^^
+
+tests\test_authentication.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x00000289928D7770>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "rememberMe": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "'GraphQLContext' object has no attribute 'service'", 'locations': [{'line': 3, 'column': 11}], 'path': ['login']}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:36: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:50,640 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:50,643 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+______________________ test_logout_revokes_refresh_token ______________________
+
+client = <starlette.testclient.TestClient object at 0x0000028992907350>
+
+    def test_logout_revokes_refresh_token(client: TestClient) -> None:
+        """Test that logout revokes the refresh token."""
+>       tokens = login(client)
+                 ^^^^^^^^^^^^^
+
+tests\test_authentication.py:159: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x0000028992907350>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "rememberMe": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "'GraphQLContext' object has no attribute 'service'", 'locations': [{'line': 3, 'column': 11}], 'path': ['login']}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:36: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:50,955 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:50,960 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+_______________________ test_login_lockout_progression ________________________
+
+client = <starlette.testclient.TestClient object at 0x00000289929AFF00>
+
+    def test_login_lockout_progression(client: TestClient) -> None:
+        """Test the full lockout progression from failed attempts to locked state."""
+        mutation = """
+        mutation {
+          login(input: {username: "testadmin", password: "wrong-password"}) {
+            accessToken
+          }
+        }
+        """
+    
+        # Login first to establish baseline
+>       login(client)
+
+tests\test_authentication.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x00000289929AFF00>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "rememberMe": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "'GraphQLContext' object has no attribute 'service'", 'locations': [{'line': 3, 'column': 11}], 'path': ['login']}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:36: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:51,712 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:51,716 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+______________________ test_logout_then_refresh_rejected ______________________
+
+client = <starlette.testclient.TestClient object at 0x00000289929ADAE0>
+
+    def test_logout_then_refresh_rejected(client: TestClient) -> None:
+        """Test that after logout, refresh token is completely invalid."""
+>       tokens = login(client)
+                 ^^^^^^^^^^^^^
+
+tests\test_authentication.py:237: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x00000289929ADAE0>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "rememberMe": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "'GraphQLContext' object has no attribute 'service'", 'locations': [{'line': 3, 'column': 11}], 'path': ['login']}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 11, 'line': 3}], 'message': "'GraphQLContext' object has no attribute 'service'", 'path': ['login']}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:36: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:07:51,944 ERROR strawberry.execution 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+2026-11-12 01:07:51,949 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 'GraphQLContext' object has no attribute 'service'
+
+GraphQL request:3:11
+2 |         mutation Login($input: LoginInput!) {
+3 |           login(input: $input) {
+  |           ^
+4 |             accessToken
+Traceback (most recent call last):
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\graphql\execution\executor.py", line 982, in execute_field
+    result = resolve_fn(source, info, **args)
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1292, in _resolver
+    return _get_result_with_extensions(
+        _source,
+        strawberry_info,
+        **kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1278, in extension_resolver
+    return reduce(
+           ~~~~~~~
+    ...<2 lines>...
+        wrapped_get_result,
+        ~~~~~~~~~~~~~~~~~~~
+    )(_source, info, **field_kwargs)
+    ~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1270, in wrapped_get_result
+    return _get_result(
+        _source,
+    ...<2 lines>...
+        field_kwargs=kwargs,
+    )
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\schema\schema_converter.py", line 1156, in _get_result
+    return field.get_result(
+           ~~~~~~~~~~~~~~~~^
+        _source, info=info, args=field_args, kwargs=field_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\field.py", line 242, in get_result
+    return self.base_resolver(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\strawberry\types\fields\resolver.py", line 280, in __call__
+    return self.wrapped_func(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend\app\schema.py", line 37, in login
+    service: AuthService = info.context.service
+                           ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'GraphQLContext' object has no attribute 'service'
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+=========================== short test summary info ===========================
+FAILED tests/test_authentication.py::test_login_and_authenticated_current_user
+FAILED tests/test_authentication.py::test_login_with_remember_me - AssertionE...
+FAILED tests/test_authentication.py::test_invalid_login_does_not_disclose_account_details
+FAILED tests/test_authentication.py::test_invalid_login_for_nonexistent_user
+FAILED tests/test_authentication.py::test_repeated_failed_login_temporarily_locks_account
+FAILED tests/test_authentication.py::test_refresh_rotates_and_old_token_cannot_be_reused
+FAILED tests/test_authentication.py::test_logout_revokes_refresh_token - Asse...
+FAILED tests/test_authentication.py::test_login_lockout_progression - Asserti...
+FAILED tests/test_authentication.py::test_logout_then_refresh_rejected - Asse...
+========================= 9 failed, 3 passed in 3.73s =========================

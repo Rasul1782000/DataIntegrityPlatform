@@ -1,0 +1,101 @@
+<div class="log-monitoring-page">
+  <app-loading-spinner></app-loading-spinner>
+
+  <div class="log-monitoring-content" *ngIf="!isLoading">
+    <div class="page-header">
+      <h1>Log Monitoring</h1>
+    </div>
+
+    <!-- Log Sources -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Log Sources</h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Source Name</th>
+                <th>Type</th>
+                <th>Path</th>
+                <th>Status</th>
+                <th>Last Read</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let source of logSources">
+                <td>{{ source.sourceName }}</td>
+                <td>
+                  <span [ngClass]="getSourceTypeClass(source.sourceType)">
+                    {{ source.sourceType | status }}
+                  </span>
+                </td>
+                <td>{{ source.sourcePath }}</td>
+                <td>
+                  <span [ngClass]="getHealthClass(source.healthStatus)">
+                    {{ source.healthStatus | status }}
+                  </span>
+                </td>
+                <td>{{ source.lastReadAt | timestamp }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-edit me-1"></i> Configure
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-trash me-1"></i> Remove
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="logSources.length === 0">
+                <td colspan="6">
+                  <app-empty-state></app-empty-state>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Log Viewer -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Live Log Viewer</h4>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <select class="form-select">
+              <option>Select log source</option>
+              <option *ngFor="let source of logSources">{{ source.sourceName }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <input type="time-range" class="form-control" placeholder="Time range">
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary w-100">Load Logs</button>
+          </div>
+        </div>
+        <div class="live-stream" style="height: 300px; border: 1px solid #e2e8f0; overflow-y: auto;">
+          <div *ngIf="isStreaming" class="stream-indicator">
+            <div class="spinner spinner-sm me-2"></div>
+            <span>Live stream active</span>
+          </div>
+          <div *ngIf="!isStreaming" class="stream-disconnected">
+            <small>Stream disconnected or paused</small>
+          </div>
+          <div class="log-entry" *ngFor="let event of displayedEvents">
+            <span class="log-timestamp">{{ event.normalizedTimestamp | timestamp }}</span>
+            <span class="log-category {{ event.severity | severity | lowercase }}">
+              {{ event.eventCategory | status }}
+            </span>
+            <span class="log-message">{{ event.eventDescription }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,127 @@
+<div class="threat-detection-page">
+  <app-loading-spinner></app-loading-spinner>
+
+  <div class="threat-detection-content" *ngIf="!isLoading">
+    <div class="page-header">
+      <h1>Threat Detection</h1>
+    </div>
+
+    <!-- Detection Rules -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Detection Rules</h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Rule Name</th>
+                <th>Category</th>
+                <th>Severity</th>
+                <th>Threshold</th>
+                <th>Enabled</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let rule of detectionRules">
+                <td>{{ rule.ruleName }}</td>
+                <td>{{ rule.ruleType }}</td>
+                <td>
+                  <span [ngClass]="getSeverityClass(rule.severity)">
+                    {{ rule.severity | severity }}
+                  </span>
+                </td>
+                <td>{{ rule.threshold || 'N/A' }}</td>
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rule-{{ rule.id }}"
+                           [checked]="rule.enabled" disabled>
+                    <label class="form-check-label" for="rule-{{ rule.id }}"></label>
+                  </div>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-edit me-1"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-trash me-1"></i> Delete
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="detectionRules.length === 0">
+                <td colspan="6">
+                  <app-empty-state></app-empty-state>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suspicious IPs -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Suspicious IP Addresses</h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>IP Address</th>
+                <th>First Seen</th>
+                <th>Last Seen</th>
+                <th>Failed Authentications</th>
+                <th>Threat Level</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ip of suspiciousIPs">
+                <td>
+                  <strong>{{ ip.sourceIp }}</strong>
+                  <br>
+                  <small class="text-secondary">{{ ip.associatedUsernames?.join(', ') || '—' }}</small>
+                </td>
+                <td>{{ ip.firstSeenAt | timestamp }}</td>
+                <td>{{ ip.lastSeenAt | timestamp }}</td>
+                <td>{{ ip.failedAuthentications || 0 }}</td>
+                <td>
+                  <span [ngClass]="getThreatLevelClass(ip.severity)">
+                    {{ ip.severity | severity }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-eye me-1"></i> Details
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-trash me-1"></i> Block
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="suspiciousIPs.length === 0">
+                <td colspan="6">
+                  <app-empty-state></app-empty-state>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investigation Queue -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Investigation Queue</h4>
+      </div>
+      <div class="card-body">
+        <p>No investigations in queue at this time.</p>
+      </div>
+    </div>
+  </div>
+</div>

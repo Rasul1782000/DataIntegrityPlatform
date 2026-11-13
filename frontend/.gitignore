@@ -1,0 +1,17 @@
+# Compiled output
+/dist
+/tmp
+
+# Angular cache
+/.angular
+
+# Node
+/node_modules
+npm-debug.log*
+yarn-error.log
+
+# IDEs and editors
+.idea/
+
+# Environment files
+.env

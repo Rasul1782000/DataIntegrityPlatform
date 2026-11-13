@@ -1,0 +1,17 @@
+// App root shell: sidebar + top area + routed content
+.main-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.top-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+}

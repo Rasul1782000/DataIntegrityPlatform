@@ -1,0 +1,12 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.critical { background-color: #fee2e2; color: #b91c1c; }
+.high { background-color: #f6ad55; color: #92400e; }
+.medium { background-color: #fbbf24; color: #d97706; }
+.low { background-color: #a3e635; color: #65a30d; }

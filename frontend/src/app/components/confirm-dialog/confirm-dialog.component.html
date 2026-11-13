@@ -1,0 +1,15 @@
+<div class="confirm-dialog-overlay">
+  <div class="confirm-dialog-content">
+    <div class="confirm-dialog-header">
+      <h3>{{ title }}</h3>
+      <button class="confirm-dialog-close" (click)="onClose()">×</button>
+    </div>
+    <div class="confirm-dialog-body">
+      <p>{{ message }}</p>
+    </div>
+    <div class="confirm-dialog-actions">
+      <button class="confirm-dialog-cancel" (click)="onClose()">Cancel</button>
+      <button class="confirm-dialog-confirm" (click)="onConfirm()">Confirm</button>
+    </div>
+  </div>
+</div>

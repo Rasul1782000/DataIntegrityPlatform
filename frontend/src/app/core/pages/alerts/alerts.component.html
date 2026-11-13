@@ -1,0 +1,144 @@
+<div class="alerts-page">
+  <app-loading-spinner></app-loading-spinner>
+
+  <div class="alerts-content" *ngIf="!isLoading">
+    <div class="page-header">
+      <h1>Security Alerts</h1>
+    </div>
+
+    <!-- Alerts Summary -->
+    <div class="alerts-summary row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card critical">
+          <div class="card-header">
+            <span>Critical</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ summaryCounts.critical }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card high">
+          <div class="card-header">
+            <span>High</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ summaryCounts.high }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card medium">
+          <div class="card-header">
+            <span>Medium</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ summaryCounts.medium }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card dashboard-card low">
+          <div class="card-header">
+            <span>Low</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ summaryCounts.low }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts List -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Alerts</h4>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Assigned</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alert of alerts">
+                <td>
+                  <strong>{{ alert.title }}</strong>
+                  <br>
+                  <small class="text-secondary">{{ alert.description | truncate: 50 }}</small>
+                </td>
+                <td>
+                  <span [ngClass]="getSeverityClass(alert.severity)">
+                    {{ alert.severity | severity }}
+                  </span>
+                </td>
+                <td>
+                  <span [ngClass]="getStatusClass(alert.status)">
+                    {{ alert.status | status }}
+                  </span>
+                </td>
+                <td>{{ alert.createdAt | timestamp }}</td>
+                <td>{{ alert.assignedTo || 'Unassigned' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-eye me-1"></i> View
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-check me-1"></i> Acknowledge
+                  </button>
+                  <button class="btn btn-sm btn-outline-info">
+                    <i class="fas fa-flag me-1"></i> Assign
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="alerts.length === 0">
+                <td colspan="6">
+                  <app-empty-state></app-empty-state>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Lifecycle -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Alert Lifecycle</h4>
+      </div>
+      <div class="card-body">
+        <div class="timeline">
+          <div class="timeline-item new">
+            <div class="timeline-dot critical"></div>
+            <span>New</span>
+          </div>
+          <div class="timeline-item acknowledged">
+            <div class="timeline-dot high"></div>
+            <span>Acknowledged</span>
+          </div>
+          <div class="timeline-item investigating">
+            <div class="timeline-dot medium"></div>
+            <span>Investigating</span>
+          </div>
+          <div class="timeline-item resolved">
+            <div class="timeline-dot success"></div>
+            <span>Resolved</span>
+          </div>
+          <div class="timeline-item false-positive">
+            <div class="timeline-dot informational"></div>
+            <span>False Positive</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

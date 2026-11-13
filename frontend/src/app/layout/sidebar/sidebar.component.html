@@ -1,0 +1,61 @@
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <span>DISM</span>
+  </div>
+  <nav class="sidebar-nav">
+    <ul>
+      <li>
+        <a routerLink="/dashboard" [routerLinkActive]="['active']">
+          <i class="fas fa-tachometer-alt me-2"></i>
+          <span>Overview</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/file-integrity" [routerLinkActive]="['active']">
+          <i class="fas fa-folder me-2"></i>
+          <span>File Integrity</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/log-monitoring" [routerLinkActive]="['active']">
+          <i class="fas fa-file-log me-2"></i>
+          <span>Log Monitoring</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/threat-detection" [routerLinkActive]="['active']">
+          <i class="fas fa-shield-alt me-2"></i>
+          <span>Threat Detection</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/alerts" [routerLinkActive]="['active']">
+          <i class="fas fa-bell me-2"></i>
+          <span>Alerts</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/audit" [routerLinkActive]="['active']">
+          <i class="fas fa-file-audit me-2"></i>
+          <span>Audit Trail</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/reports" [routerLinkActive]="['active']">
+          <i class="fas fa-file-excel me-2"></i>
+          <span>Reports</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/user-management" [routerLinkActive]="['active']">
+          <i class="fas fa-users me-2"></i>
+          <span>User Management</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <small>v1.0.0</small>
+  </div>
+</div>

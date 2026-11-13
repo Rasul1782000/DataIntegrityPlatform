@@ -1,0 +1,527 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\Rasul\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Rasul\Desktop\DataIntegritysecurityMonitoringPlatform\backend
+configfile: pyproject.toml
+plugins: anyio-4.11.0, asyncio-1.4.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 12 items
+
+tests/test_authentication.py::test_login_and_authenticated_current_user FAILED [  8%]
+tests/test_authentication.py::test_login_with_remember_me FAILED         [ 16%]
+tests/test_authentication.py::test_invalid_login_does_not_disclose_account_details FAILED [ 25%]
+tests/test_authentication.py::test_invalid_login_for_nonexistent_user FAILED [ 33%]
+tests/test_authentication.py::test_repeated_failed_login_temporarily_locks_account FAILED [ 41%]
+tests/test_authentication.py::test_refresh_rotates_and_old_token_cannot_be_reused FAILED [ 50%]
+tests/test_authentication.py::test_logout_revokes_refresh_token FAILED   [ 58%]
+tests/test_authentication.py::test_logout_with_invalid_token PASSED      [ 66%]
+tests/test_authentication.py::test_health_checks PASSED                  [ 75%]
+tests/test_authentication.py::test_login_lockout_progression FAILED      [ 83%]
+tests/test_authentication.py::test_logout_then_refresh_rejected FAILED   [ 91%]
+tests/test_authentication.py::test_login_after_lockout FAILED            [100%]
+
+================================== FAILURES ===================================
+__________________ test_login_and_authenticated_current_user __________________
+
+client = <starlette.testclient.TestClient object at 0x000001924D1CC590>
+
+    def test_login_and_authenticated_current_user(client: TestClient) -> None:
+        """Test basic login and me query."""
+>       tokens = login(client)
+                 ^^^^^^^^^^^^^
+
+tests\test_authentication.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x000001924D1CC590>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "remember_me": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.", 'locations': [{'line': 2, 'column': 24}]}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:38: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:34,781 ERROR strawberry.execution Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+2026-11-12 01:05:34,782 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+_________________________ test_login_with_remember_me _________________________
+
+client = <starlette.testclient.TestClient object at 0x000001924D2B5310>
+
+    def test_login_with_remember_me(client: TestClient) -> None:
+        """Test login with remember_me flag."""
+>       tokens = login(client, remember_me=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_authentication.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x000001924D2B5310>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = True
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "remember_me": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': True}.", 'locations': [{'line': 2, 'column': 24}]}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': True}."}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': True}."}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:38: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:35,256 ERROR strawberry.execution Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': True}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': True}.
+2026-11-12 01:05:35,259 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': True}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': True}.
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+____________ test_invalid_login_does_not_disclose_account_details _____________
+
+client = <starlette.testclient.TestClient object at 0x000001924D3E02D0>
+
+    def test_invalid_login_does_not_disclose_account_details(client: TestClient) -> None:
+        """Test that invalid login gives generic error regardless of user existence."""
+        response = graphql(
+            client,
+            """
+            mutation {
+              login(input: {username: "testadmin", password: "wrong-password"}) {
+                accessToken
+              }
+            }
+            """,
+        )
+        assert response.status_code == 200
+>       assert response.json()["errors"][0]["message"] == "Invalid username or password."
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'errors'
+
+tests\test_authentication.py:83: KeyError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:35,574 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+___________________ test_invalid_login_for_nonexistent_user ___________________
+
+client = <starlette.testclient.TestClient object at 0x000001924D39A9E0>
+
+    def test_invalid_login_for_nonexistent_user(client: TestClient) -> None:
+        """Test login with nonexistent user gives same error (no account enumeration)."""
+        response = graphql(
+            client,
+            """
+            mutation {
+              login(input: {username: "nonexistent_user_12345", password: "any-password"}) {
+                accessToken
+              }
+            }
+            """,
+        )
+        assert response.status_code == 200
+>       assert response.json()["errors"][0]["message"] == "Invalid username or password."
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'errors'
+
+tests\test_authentication.py:99: KeyError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:35,906 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+____________ test_repeated_failed_login_temporarily_locks_account _____________
+
+client = <starlette.testclient.TestClient object at 0x000001924D399A70>
+
+    def test_repeated_failed_login_temporarily_locks_account(client: TestClient) -> None:
+        """Test account lockout after max failed attempts."""
+        mutation = """
+        mutation {
+          login(input: {username: "testadmin", password: "wrong-password"}) {
+            accessToken
+          }
+        }
+        """
+    
+        # Attempt 5 failed logins (max failed attempts)
+>       for _ in range(MAX_FAILED_ATTEMPTS):
+                       ^^^^^^^^^^^^^^^^^^^
+E       NameError: name 'MAX_FAILED_ATTEMPTS' is not defined
+
+tests\test_authentication.py:113: NameError
+_____________ test_refresh_rotates_and_old_token_cannot_be_reused _____________
+
+client = <starlette.testclient.TestClient object at 0x000001924D378EF0>
+
+    def test_refresh_rotates_and_old_token_cannot_be_reused(client: TestClient) -> None:
+        """Test that refresh token rotation works and old tokens are invalidated."""
+>       initial = login(client)
+                  ^^^^^^^^^^^^^
+
+tests\test_authentication.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x000001924D378EF0>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "remember_me": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.", 'locations': [{'line': 2, 'column': 24}]}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:38: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:36,423 ERROR strawberry.execution Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+2026-11-12 01:05:36,424 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+______________________ test_logout_revokes_refresh_token ______________________
+
+client = <starlette.testclient.TestClient object at 0x000001924D3DA580>
+
+    def test_logout_revokes_refresh_token(client: TestClient) -> None:
+        """Test that logout revokes the refresh token."""
+>       tokens = login(client)
+                 ^^^^^^^^^^^^^
+
+tests\test_authentication.py:164: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x000001924D3DA580>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "remember_me": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.", 'locations': [{'line': 2, 'column': 24}]}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:38: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:36,662 ERROR strawberry.execution Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+2026-11-12 01:05:36,664 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+_______________________ test_login_lockout_progression ________________________
+
+client = <starlette.testclient.TestClient object at 0x000001924D45A030>
+
+    def test_login_lockout_progression(client: TestClient) -> None:
+        """Test the full lockout progression from failed attempts to locked state."""
+        mutation = """
+        mutation {
+          login(input: {username: "testadmin", password: "wrong-password"}) {
+            accessToken
+          }
+        }
+        """
+    
+        # Login first to establish baseline
+>       login(client)
+
+tests\test_authentication.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x000001924D45A030>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "remember_me": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.", 'locations': [{'line': 2, 'column': 24}]}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:38: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:37,430 ERROR strawberry.execution Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+2026-11-12 01:05:37,432 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+______________________ test_logout_then_refresh_rejected ______________________
+
+client = <starlette.testclient.TestClient object at 0x000001924D45BDF0>
+
+    def test_logout_then_refresh_rejected(client: TestClient) -> None:
+        """Test that after logout, refresh token is completely invalid."""
+>       tokens = login(client)
+                 ^^^^^^^^^^^^^
+
+tests\test_authentication.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+client = <starlette.testclient.TestClient object at 0x000001924D45BDF0>
+username = 'testadmin', password = 'Correct-Horse-Battery-Staple!2024'
+remember_me = False
+
+    def login(client: TestClient, username: str = VALID_USERNAME, password: str = VALID_PASSWORD, remember_me: bool = False) -> dict:
+        """Login and return tokens dict."""
+        response = graphql(
+            client,
+            """
+            mutation Login($input: LoginInput!) {
+              login(input: $input) {
+                accessToken
+                refreshToken
+                expiresIn
+                tokenType
+                rememberMe
+                user {
+                  username
+                  role
+                }
+              }
+            }
+            """,
+            {"input": {"username": username, "password": password, "remember_me": remember_me}},
+        )
+        assert response.status_code == 200
+>       assert "errors" not in response.json(), f"GraphQL errors: {response.json().get('errors')}"
+E       AssertionError: GraphQL errors: [{'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.", 'locations': [{'line': 2, 'column': 24}]}]
+E       assert 'errors' not in {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]}
+E        +  where {'data': None, 'errors': [{'locations': [{'column': 24, 'line': 2}], 'message': "Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}."}]} = json()
+E        +    where json = <Response [200 OK]>.json
+
+tests\test_authentication.py:38: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-11-12 01:05:37,675 ERROR strawberry.execution Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+2026-11-12 01:05:37,677 INFO httpx HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+------------------------------ Captured log call ------------------------------
+ERROR    strawberry.execution:logging.py:25 Variable '$input' has invalid value: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+
+GraphQL request:2:24
+1 |
+2 |         mutation Login($input: LoginInput!) {
+  |                        ^
+3 |           login(input: $input) {
+graphql.error.graphql_error.GraphQLError: Expected value of type 'LoginInput' not to include unknown field 'remember_me'. Did you mean 'rememberMe'? Found: {'username': 'testadmin', 'password': 'Correct-Horse-Battery-Staple!2024', 'remember_me': False}.
+INFO     httpx:_client.py:1025 HTTP Request: POST http://testserver/graphql "HTTP/1.1 200 OK"
+__________________________ test_login_after_lockout ___________________________
+
+client = <starlette.testclient.TestClient object at 0x000001924D4587C0>
+
+    def test_login_after_lockout(client: TestClient) -> None:
+        """Test that after lockout, successful login is possible (presumably after admin unlock)."""
+        # This test verifies the lockout mechanism
+        # In a full system, admin would call unlock_user endpoint
+        mutation = """
+        mutation {
+          login(input: {username: "testadmin", password: "wrong-password"}) {
+            accessToken
+          }
+        }
+        """
+    
+        # Get past the lockout threshold
+>       for _ in range(MAX_FAILED_ATTEMPTS + 1):
+                       ^^^^^^^^^^^^^^^^^^^
+E       NameError: name 'MAX_FAILED_ATTEMPTS' is not defined
+
+tests\test_authentication.py:278: NameError
+=========================== short test summary info ===========================
+FAILED tests/test_authentication.py::test_login_and_authenticated_current_user
+FAILED tests/test_authentication.py::test_login_with_remember_me - AssertionE...
+FAILED tests/test_authentication.py::test_invalid_login_does_not_disclose_account_details
+FAILED tests/test_authentication.py::test_invalid_login_for_nonexistent_user
+FAILED tests/test_authentication.py::test_repeated_failed_login_temporarily_locks_account
+FAILED tests/test_authentication.py::test_refresh_rotates_and_old_token_cannot_be_reused
+FAILED tests/test_authentication.py::test_logout_revokes_refresh_token - Asse...
+FAILED tests/test_authentication.py::test_login_lockout_progression - Asserti...
+FAILED tests/test_authentication.py::test_logout_then_refresh_rejected - Asse...
+FAILED tests/test_authentication.py::test_login_after_lockout - NameError: na...
+======================== 10 failed, 2 passed in 3.43s =========================

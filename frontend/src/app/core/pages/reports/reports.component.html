@@ -1,0 +1,100 @@
+<div class="reports-page">
+  <app-loading-spinner></app-loading-spinner>
+
+  <div class="reports-content" *ngIf="!isLoading">
+    <div class="page-header">
+      <h1>Reports</h1>
+    </div>
+
+    <!-- Report Type Filters -->
+    <div class="report-filters card mb-4">
+      <div class="card-header">
+        <h4>Report Types</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 mb-2">
+            <button class="btn btn-link w-100 report-type-btn active" data-type="fim">
+              <i class="fas fa-file-upload me-2"></i> File Integrity Scan History
+            </button>
+          </div>
+          <div class="col-md-4 mb-2">
+            <button class="btn btn-link w-100 report-type-btn active" data-type="alerts">
+              <i class="fas fa-exclamation-triangle me-2"></i> Alerts & Resolutions
+            </button>
+          </div>
+          <div class="col-md-4 mb-2">
+            <button class="btn btn-link w-100 report-type-btn" data-type="log">
+              <i class="fas fa-file-log me-2"></i> Log Source Health
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports List -->
+    <div class="card mb-4 reports-list-card">
+      <div class="card-header">
+        <h4>Reports</h4>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Report Name</th>
+                <th>Type</th>
+                <th>Generated</th>
+                <th>Records</th>
+                <th>Format</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let report of reports">
+                <td>
+                  <strong>{{ report.title }}</strong>
+                  <br>
+                  <small class="text-secondary">{{ report.type }}</small>
+                </td>
+                <td>
+                  <span [ngClass]="getReportTypeClass(report.type)">
+                    {{ report.type | status }}
+                  </span>
+                </td>
+                <td>{{ report.generatedAt | timestamp }}</td>
+                <td>{{ report.recordCount }}</td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-secondary">
+                      <i class="fas fa-download me-1"></i> CSV
+                    </button>
+                    <button class="btn btn-outline-primary">
+                      <i class="fas fa-file-pdf me-1"></i> PDF
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="reports.length === 0">
+                <td colspan="6">
+                  <app-empty-state></app-empty-state>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Options -->
+    <div class="card">
+      <div class="card-header">
+        <h4>Export Options</h4>
+      </div>
+      <div class="card-body">
+        <p>Select a report type and date range to generate a new report.</p>
+        <button class="btn btn-primary w-100 mt-2">Generate Report</button>
+      </div>
+    </div>
+  </div>
+</div>

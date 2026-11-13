@@ -1,0 +1,91 @@
+<div class="file-integrity-page">
+  <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+  <div class="file-integrity-content" *ngIf="!isLoading">
+    <div class="page-header">
+      <h1>File Integrity Monitoring</h1>
+      <button class="btn btn-primary" (click)="registerDirectory()">
+        <i class="fas fa-folder-plus me-2"></i>
+        Register Directory
+      </button>
+    </div>
+
+    <!-- Monitored Directories Summary -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Monitored Directories</div>
+          <div class="card-body">
+            <h5 class="card-title">{{ monitoredDirectories.length }}</h5>
+            <p class="card-text">Directories under active monitoring</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Baselines Created</div>
+          <div class="card-body">
+            <h5 class="card-title">{{ baselinesCreated }}</h5>
+            <p class="card-text">Trusted file baselines</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent File Events -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Recent File Events</h4>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>File Path</th>
+                <th>Directory</th>
+                <th>Event Type</th>
+                <th>Severity</th>
+                <th>Detected</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of recentEvents">
+                <td>
+                  <app-file-status-badge [status]="event.eventType | status"
+                                         [label]="event.relativePath | truncate: 30"></app-file-status-badge>
+                </td>
+                <td>{{ event.directoryName || '—' }}</td>
+                <td>
+                  <span [ngClass]="getEventTypeClass(event.eventType)">
+                    {{ event.eventType | status }}
+                  </span>
+                </td>
+                <td>
+                  <span [ngClass]="getSeverityClass(event.severity)">
+                    {{ event.severity | severity }}
+                  </span>
+                </td>
+                <td>{{ event.detectedAt | timestamp }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-eye me-1"></i> View
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-edit me-1"></i> Investigate
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="recentEvents.length === 0">
+                <td colspan="6">
+                  <app-empty-state></app-empty-state>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
