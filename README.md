@@ -92,8 +92,16 @@ uvicorn app.main:app --reload
 ```powershell
 cd frontend
 npm install
-npm start
+ng serve
 ```
+
+> ⚠️ If you get *"The term 'ng' is not recognized"* — the Angular CLI isn't installed globally. Fix it with:
+>
+> ```powershell
+> npm install -g @angular/cli@17
+> ```
+>
+> (Alternatively, `npx ng serve` uses the project-local CLI without a global install.)
 
 ➡️ Open **http://localhost:4200** — the app talks to the backend GraphQL API at `http://localhost:8000/graphql`.
 
