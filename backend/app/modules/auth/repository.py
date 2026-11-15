@@ -28,6 +28,10 @@ class UserRepository:
         self.session.flush()
         return user
 
+    def list_users(self, limit: int = 100) -> list[User]:
+        statement = select(User).order_by(User.created_at.desc()).limit(max(1, min(limit, 500)))
+        return list(self.session.scalars(statement).all())
+
 
 class AuthRepository:
     def __init__(self, session: Session) -> None:

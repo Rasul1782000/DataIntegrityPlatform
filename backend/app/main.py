@@ -13,6 +13,8 @@ from app.database.session import create_database_engine, create_session_factory
 from app.schema import get_context, schema
 
 from app.modules.auth.service import AuthService
+from app.modules.threat_detection.service import ensure_default_rules
+from app.workers.scheduler import MonitoringScheduler
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +24,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     configure_logging()
     engine = create_database_engine(app_settings)
     session_factory = create_session_factory(engine)
+    scheduler = MonitoringScheduler(session_factory)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -33,8 +36,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             )
         # Bootstrap admin creation is not yet implemented - skip for now
         # TODO: Implement AuthService.create_bootstrap_admin() when user management is added
-        yield
-        engine.dispose()
+        with session_factory() as session:
+            created = ensure_default_rules(session)
+            if created:
+                logger.info("Seeded %s default detection rule(s).", created)
+        # Background monitoring runs independently of the browser session.
+        scheduler.start()
+        try:
+            yield
+        finally:
+            scheduler.stop()
+            engine.dispose()
 
     application = FastAPI(
         title="Data Integrity & Security Monitoring Platform",

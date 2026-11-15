@@ -7,6 +7,12 @@ from app.config.settings import get_settings
 from app.database.base import Base
 from app.database.session import create_database_engine, get_database_url
 import app.modules.auth.models  # noqa: F401
+import app.modules.alerts.models  # noqa: F401
+import app.modules.audit.models  # noqa: F401
+import app.modules.integrity.models  # noqa: F401
+import app.modules.log_monitoring.models  # noqa: F401
+import app.modules.reports.models  # noqa: F401
+import app.modules.threat_detection.models  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:

@@ -13,9 +13,22 @@ from app.modules.auth.graphql.types import UserType, AuthPayload
 from app.modules.auth.service import AuthService
 from app.modules.auth.models import User
 
+from app.modules.auth.graphql.admin_queries import UserManagementQueries
+from app.modules.dashboard.graphql import DashboardQueries
+from app.modules.integrity.graphql.queries import IntegrityQueries
+from app.modules.integrity.graphql.mutations import IntegrityMutations
+from app.modules.log_monitoring.graphql.queries import LogMonitoringQueries
+from app.modules.log_monitoring.graphql.mutations import LogMonitoringMutations
+from app.modules.threat_detection.graphql.queries import ThreatDetectionQueries
+from app.modules.alerts.graphql.queries import AlertQueries
+from app.modules.alerts.graphql.mutations import AlertMutations
+from app.modules.audit.graphql.queries import AuditQueries
+from app.modules.reports.graphql.queries import ReportQueries
+from app.modules.reports.graphql.mutations import ReportMutations
+
 
 # ---------------------------------------------------------------------------
-# GraphQL request context (moved from app/graphql/context.py)
+# GraphQL request context
 # ---------------------------------------------------------------------------
 
 
@@ -53,7 +66,7 @@ def get_context(
 
 
 # ---------------------------------------------------------------------------
-# GraphQL schema
+# GraphQL schema (composed from feature modules)
 # ---------------------------------------------------------------------------
 
 
@@ -66,33 +79,36 @@ class LoginInput:
 
 
 @strawberry.type
-class Query:
+class Query(
+    UserManagementQueries,
+    DashboardQueries,
+    IntegrityQueries,
+    LogMonitoringQueries,
+    ThreatDetectionQueries,
+    AlertQueries,
+    AuditQueries,
+    ReportQueries,
+):
     @strawberry.field
     def me(self, info: Info) -> UserType | None:
         """Get current authenticated user."""
-        from strawberry.types import Info as STInfo
-        # Get the context which has the user
         context = info.context
-        if hasattr(context, 'current_user') and context.current_user is not None:
+        if hasattr(context, "current_user") and context.current_user is not None:
             return UserType.from_model(context.current_user)
         return None
 
 
 @strawberry.type
-class Mutation:
+class Mutation(IntegrityMutations, LogMonitoringMutations, AlertMutations, ReportMutations):
     @strawberry.mutation
     def login(self, info: Info, input: LoginInput) -> AuthPayload:
         """Login user and return auth tokens."""
-        # Get settings from context
-        settings: Settings = info.context.settings
-        # Get the service from context
         service: AuthService = info.context.service
-        # Login the user with MFA support
         tokens = service.login(
-            input.username, 
-            input.password, 
+            input.username,
+            input.password,
             remember_me=input.rememberMe,
-            mfa_code=input.mfaCode
+            mfa_code=input.mfaCode,
         )
         return AuthPayload(
             access_token=tokens.access_token,
@@ -107,7 +123,6 @@ class Mutation:
     @strawberry.mutation
     def refreshSession(self, info: Info, refresh_token: str) -> AuthPayload:
         """Refresh session and return new tokens."""
-        settings: Settings = info.context.settings
         service: AuthService = info.context.service
         tokens = service.refresh(refresh_token)
         return AuthPayload(
@@ -123,7 +138,6 @@ class Mutation:
     @strawberry.mutation
     def logout(self, info: Info, refresh_token: str) -> bool:
         """Logout and revoke refresh token."""
-        settings: Settings = info.context.settings
         service: AuthService = info.context.service
         result = service.logout(refresh_token)
         return result.get("success", False)
