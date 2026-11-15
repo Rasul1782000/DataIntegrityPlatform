@@ -1,29 +1,36 @@
 <div class="top-navbar">
   <div class="navbar-brand">
-    <span>Data Integrity & Security</span>
+    <i class="fas fa-shield-alt"></i>
+    <span>Data Integrity &amp; Security</span>
   </div>
+
+  <app-global-search class="topbar-search"></app-global-search>
+
   <ul class="navbar-nav ms-auto">
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="navbarAlertsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-bell me-2"></i>
-        <span class="d-none d-md-block">Alerts</span>
-        <span class="badge bg-critical" id="alertsCount">0</span>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/alerts" title="Alerts" aria-label="Alerts">
+        <i class="fas fa-bell"></i>
+        <span class="nav-badge">0</span>
       </a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarAlertsDropdown">
-        <li><a class="dropdown-item" href="#">View all alerts</a></li>
-        <li><hr class="dropdown-divider"/></li>
-        <li><a class="dropdown-item" href="#">Mark all as read</a></li>
-      </ul>
     </li>
     <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="assets/user.png" alt="User" class="rounded-circle" width="32" height="32">
+      <a class="nav-link dropdown-toggle" role="button" aria-expanded="false" title="Account">
+        <i class="fas fa-user-circle user-avatar"></i>
       </a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><hr class="dropdown-divider"/></li>
-        <li><a class="dropdown-item" href="#" (click)="logout($event)">Logout</a></li>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <h6 class="dropdown-header">Account</h6>
+        </li>
+        <li>
+          <a class="dropdown-item" routerLink="/dashboard">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" routerLink="/user-management">
+            <i class="fas fa-users me-2"></i>User Management
+          </a>
+        </li>
       </ul>
     </li>
   </ul>

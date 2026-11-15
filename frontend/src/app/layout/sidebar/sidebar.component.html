@@ -1,54 +1,67 @@
 <div class="sidebar">
   <div class="sidebar-brand">
-    <span>DISM</span>
+    <span class="brand-mark"><i class="fas fa-shield-halved"></i></span>
+    <span class="brand-wrap">
+      <span class="brand-text">DISM</span>
+      <span class="brand-sub">Security Platform</span>
+    </span>
   </div>
   <nav class="sidebar-nav">
+    <div class="sidebar-label">Monitoring</div>
     <ul>
       <li>
-        <a routerLink="/dashboard" [routerLinkActive]="['active']">
-          <i class="fas fa-tachometer-alt me-2"></i>
+        <a routerLink="/dashboard" [routerLinkActive]="['active']" title="Overview">
+          <i class="fas fa-tachometer-alt"></i>
           <span>Overview</span>
         </a>
       </li>
       <li>
-        <a routerLink="/file-integrity" [routerLinkActive]="['active']">
-          <i class="fas fa-folder me-2"></i>
+        <a routerLink="/file-integrity" [routerLinkActive]="['active']" title="File Integrity">
+          <i class="fas fa-folder"></i>
           <span>File Integrity</span>
         </a>
       </li>
       <li>
-        <a routerLink="/log-monitoring" [routerLinkActive]="['active']">
-          <i class="fas fa-file-log me-2"></i>
+        <a routerLink="/log-monitoring" [routerLinkActive]="['active']" title="Log Monitoring">
+          <i class="fas fa-file-log"></i>
           <span>Log Monitoring</span>
         </a>
       </li>
       <li>
-        <a routerLink="/threat-detection" [routerLinkActive]="['active']">
-          <i class="fas fa-shield-alt me-2"></i>
+        <a routerLink="/threat-detection" [routerLinkActive]="['active']" title="Threat Detection">
+          <i class="fas fa-shield-alt"></i>
           <span>Threat Detection</span>
         </a>
       </li>
+    </ul>
+
+    <div class="sidebar-label">Security</div>
+    <ul>
       <li>
-        <a routerLink="/alerts" [routerLinkActive]="['active']">
-          <i class="fas fa-bell me-2"></i>
+        <a routerLink="/alerts" [routerLinkActive]="['active']" title="Alerts">
+          <i class="fas fa-bell"></i>
           <span>Alerts</span>
         </a>
       </li>
       <li>
-        <a routerLink="/audit" [routerLinkActive]="['active']">
-          <i class="fas fa-file-audit me-2"></i>
+        <a routerLink="/audit" [routerLinkActive]="['active']" title="Audit Trail">
+          <i class="fas fa-file-audit"></i>
           <span>Audit Trail</span>
         </a>
       </li>
+    </ul>
+
+    <div class="sidebar-label">Administration</div>
+    <ul>
       <li>
-        <a routerLink="/reports" [routerLinkActive]="['active']">
-          <i class="fas fa-file-excel me-2"></i>
+        <a routerLink="/reports" [routerLinkActive]="['active']" title="Reports">
+          <i class="fas fa-file-excel"></i>
           <span>Reports</span>
         </a>
       </li>
       <li>
-        <a routerLink="/user-management" [routerLinkActive]="['active']">
-          <i class="fas fa-users me-2"></i>
+        <a routerLink="/user-management" [routerLinkActive]="['active']" title="User Management">
+          <i class="fas fa-users"></i>
           <span>User Management</span>
         </a>
       </li>
@@ -56,6 +69,10 @@
   </nav>
 
   <div class="sidebar-footer">
-    <small>v1.0.0</small>
+    <div class="sidebar-status">
+      <span class="status-dot"></span>
+      <small>System online</small>
+    </div>
+    <small class="sidebar-version">v1.0.0</small>
   </div>
 </div>

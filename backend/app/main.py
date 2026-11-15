@@ -2,7 +2,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from strawberry.fastapi import GraphQLRouter
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -62,6 +62,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ),
         prefix="/graphql",
     )
+
+    @application.get("/health", include_in_schema=False)
+    def health() -> dict[str, str]:
+        """Aggregate health check: 200 when the service and database are healthy, 503 otherwise."""
+        return readiness()
 
     @application.get("/health/live", include_in_schema=False)
     def liveness() -> dict[str, str]:

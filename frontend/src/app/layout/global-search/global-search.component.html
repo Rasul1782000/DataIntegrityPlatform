@@ -1,6 +1,8 @@
 <div class="global-search">
   <div class="input-group">
     <span class="input-group-text"><i class="fas fa-search"></i></span>
-    <input type="text" class="form-control" placeholder="Search..." (focus)="onFocus()" (input)="onInput($event)">
+    <input #searchInput type="text" class="form-control" placeholder="Search directories, logs, alerts..."
+           (focus)="onFocus()" (input)="onInput($event)">
+    <span class="search-kbd d-none d-md-inline-flex"><kbd>Ctrl</kbd><kbd>K</kbd></span>
   </div>
 </div>

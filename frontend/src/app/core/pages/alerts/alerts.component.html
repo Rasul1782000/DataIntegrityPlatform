@@ -1,9 +1,12 @@
 <div class="alerts-page">
-  <app-loading-spinner></app-loading-spinner>
+  <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
   <div class="alerts-content" *ngIf="!isLoading">
     <div class="page-header">
-      <h1>Security Alerts</h1>
+      <div>
+        <h1>Security Alerts</h1>
+        <p class="page-subtitle">Review, acknowledge, and assign security alerts</p>
+      </div>
     </div>
 
     <!-- Alerts Summary -->
@@ -11,40 +14,44 @@
       <div class="col-md-3 col-sm-6 mb-3">
         <div class="card dashboard-card critical">
           <div class="card-header">
-            <span>Critical</span>
+            <span><i class="fas fa-skull-crossbones me-2 text-danger"></i>Critical</span>
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ summaryCounts.critical }}</h3>
+            <span class="card-text">Needs immediate action</span>
           </div>
         </div>
       </div>
       <div class="col-md-3 col-sm-6 mb-3">
         <div class="card dashboard-card high">
           <div class="card-header">
-            <span>High</span>
+            <span><i class="fas fa-bolt me-2 text-high"></i>High</span>
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ summaryCounts.high }}</h3>
+            <span class="card-text">Review soon</span>
           </div>
         </div>
       </div>
       <div class="col-md-3 col-sm-6 mb-3">
         <div class="card dashboard-card medium">
           <div class="card-header">
-            <span>Medium</span>
+            <span><i class="fas fa-circle-exclamation me-2 text-warning"></i>Medium</span>
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ summaryCounts.medium }}</h3>
+            <span class="card-text">Monitor closely</span>
           </div>
         </div>
       </div>
       <div class="col-md-3 col-sm-6 mb-3">
         <div class="card dashboard-card low">
           <div class="card-header">
-            <span>Low</span>
+            <span><i class="fas fa-circle-info me-2 text-success"></i>Low</span>
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ summaryCounts.low }}</h3>
+            <span class="card-text">Informational</span>
           </div>
         </div>
       </div>

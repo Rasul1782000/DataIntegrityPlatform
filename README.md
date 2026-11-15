@@ -103,7 +103,7 @@ ng serve
 >
 > (Alternatively, `npx ng serve` uses the project-local CLI without a global install.)
 
-➡️ Open **http://localhost:4200** — the app talks to the backend GraphQL API at `http://localhost:8000/graphql`.
+➡️ Open **http://localhost:4200** — the app talks to the backend GraphQL API at `http://localhost:8100/graphql`.
 
 ### 🔐 Admin bootstrap
 

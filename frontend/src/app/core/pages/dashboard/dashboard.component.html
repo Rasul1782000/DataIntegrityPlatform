@@ -1,121 +1,141 @@
 <div class="dashboard-page">
   <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
-  <div class="dashboard-grid" *ngIf="!isLoading">
-    <!-- Summary Cards Row -->
-    <div class="row mb-4">
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Monitored Directories</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-title">{{ dashboardSummary?.totalMonitoredDirectories || 0 }}</h3>
+  <div *ngIf="hasError && !isLoading">
+    <app-error-state></app-error-state>
+    <div class="text-center">
+      <button class="btn btn-primary" (click)="loadData()">
+        <i class="fas fa-rotate-right me-2"></i>Retry
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !hasError">
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1>Security Overview</h1>
+        <p class="page-subtitle">
+          Live view of file integrity monitoring and security event detection
+        </p>
+      </div>
+      <span class="badge bg-low live-indicator">
+        <i class="fas fa-circle"></i> Live
+      </span>
+    </div>
+
+    <!-- Primary stats -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-blue"><i class="fas fa-folder-open"></i></span>
+          <div>
+            <div class="stat-value">{{ dashboardSummary?.totalMonitoredDirectories || 0 }}</div>
+            <div class="stat-label">Monitored Directories</div>
           </div>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Total Files</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-title">{{ dashboardSummary?.totalMonitoredFiles || 0 }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Modified Today</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-title">{{ dashboardSummary?.modifiedFilesToday || 0 }}</h3>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-indigo"><i class="fas fa-file"></i></span>
+          <div>
+            <div class="stat-value">{{ dashboardSummary?.totalMonitoredFiles || 0 }}</div>
+            <div class="stat-label">Monitored Files</div>
           </div>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Added Today</span>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-amber"><i class="fas fa-pen"></i></span>
+          <div>
+            <div class="stat-value">{{ dashboardSummary?.modifiedFilesToday || 0 }}</div>
+            <div class="stat-label">Modified Today</div>
           </div>
-          <div class="card-body">
-            <h3 class="card-title">{{ dashboardSummary?.addedFilesToday || 0 }}</h3>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-green"><i class="fas fa-plus"></i></span>
+          <div>
+            <div class="stat-value">{{ dashboardSummary?.addedFilesToday || 0 }}</div>
+            <div class="stat-label">Added Today</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Charts Row -->
-    <div class="row mb-4">
+    <!-- Charts -->
+    <div class="row g-3 mb-4">
       <div class="col-md-6">
         <div class="card dashboard-card">
           <div class="card-header">
-            <span>File Changes Over Time</span>
+            <span><i class="fas fa-chart-column me-2 text-primary"></i>File Changes Today</span>
           </div>
           <div class="card-body">
-            <canvas baseChart [data]="fileChangesData" [options]="fileChangesOptions"></canvas>
+            <div class="chart-container">
+              <canvas baseChart type="bar" [data]="fileChangesData" [options]="fileChangesOptions"></canvas>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card dashboard-card">
           <div class="card-header">
-            <span>Authentication Success vs Failures</span>
+            <span><i class="fas fa-chart-pie me-2 text-primary"></i>Authentication Outcomes</span>
           </div>
           <div class="card-body">
-            <canvas baseChart [data]="authData" [options]="authOptions"></canvas>
+            <div class="chart-container">
+              <canvas baseChart type="doughnut" [data]="authData" [options]="authOptions"></canvas>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Security Metrics Row -->
-    <div class="row mb-4">
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Active Threats</span>
-          </div>
-          <div class="card-body">
-            <h3 [ngClass]="getSeverityClass(dashboardSummary?.activeThreats)">
+    <!-- Security metrics -->
+    <div class="row g-3">
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-red"><i class="fas fa-skull-crossbones"></i></span>
+          <div>
+            <div class="stat-value" [ngClass]="getSeverityClass(dashboardSummary?.activeThreats)">
               {{ dashboardSummary?.activeThreats || 0 }}
-            </h3>
+            </div>
+            <div class="stat-label">Active Threats</div>
           </div>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Critical Alerts</span>
-          </div>
-          <div class="card-body">
-            <h3 [ngClass]="getSeverityClass(dashboardSummary?.criticalAlerts)">
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-orange"><i class="fas fa-triangle-exclamation"></i></span>
+          <div>
+            <div class="stat-value" [ngClass]="getSeverityClass(dashboardSummary?.criticalAlerts)">
               {{ dashboardSummary?.criticalAlerts || 0 }}
-            </h3>
+            </div>
+            <div class="stat-label">Critical Alerts</div>
           </div>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Last Scan</span>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-purple"><i class="fas fa-file-lines"></i></span>
+          <div>
+            <div class="stat-value">{{ dashboardSummary?.totalLogEvents || 0 }}</div>
+            <div class="stat-label">Log Events</div>
           </div>
-          <div class="card-body">
-            <p *ngIf="dashboardSummary?.lastSuccessfulScan">
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+          <span class="stat-icon icon-slate"><i class="fas fa-clock"></i></span>
+          <div>
+            <div class="stat-value fs-6 fw-semibold text-secondary" *ngIf="dashboardSummary?.lastSuccessfulScan">
               {{ dashboardSummary.lastSuccessfulScan | timestamp }}
-            </p>
-            <p *ngIf="!dashboardSummary?.lastSuccessfulScan">Never</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card dashboard-card">
-          <div class="card-header">
-            <span>Log Events</span>
-          </div>
-          <div class="card-body">
-            <h3 class="card-title">{{ dashboardSummary?.totalLogEvents || 0 }}</h3>
+            </div>
+            <div class="stat-value fs-6 fw-semibold text-secondary" *ngIf="!dashboardSummary?.lastSuccessfulScan">
+              Never
+            </div>
+            <div class="stat-label">Last Successful Scan</div>
           </div>
         </div>
       </div>

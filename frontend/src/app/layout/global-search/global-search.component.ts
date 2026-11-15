@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-global-search',
@@ -8,11 +8,22 @@ import { Component } from '@angular/core';
 })
 
 export class GlobalSearchComponent {
+  @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
+
   onFocus(): void {
 
   }
 
   onInput(event: Event): void {
     // TODO: Implement global search input
+  }
+
+  // Focus the search field with Ctrl+K / Cmd+K from anywhere
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && String(event.key).toLowerCase() === 'k') {
+      event.preventDefault();
+      this.searchInput?.nativeElement.focus();
+    }
   }
 }

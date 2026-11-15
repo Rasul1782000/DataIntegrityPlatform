@@ -1,4 +1,4 @@
-import { APOLLO_OPTIONS } from 'apollo-angular';
+import { APOLLO_OPTIONS, Apollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
@@ -38,6 +38,7 @@ export function createApollo(httpLink: HttpLink): ApolloClient<any> {
 }
 
 export const apolloProviders = [
+  Apollo,
   {
     provide: APOLLO_OPTIONS,
     useFactory: createApollo,

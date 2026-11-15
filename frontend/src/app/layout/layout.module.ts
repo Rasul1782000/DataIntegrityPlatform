@@ -7,11 +7,10 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopNavbarComponent } from './top-navbar/top-navbar.component';
 import { NotificationIndicatorComponent } from './notification-indicator/notification-indicator.component';
 import { GlobalSearchComponent } from './global-search/global-search.component';
-import { AuthLayoutComponent } from './auth-layout/auth-layout.component';
 
 /**
  * Single module for the application shell (sidebar, navbar, search,
- * notification indicator) and the auth (login) layout.
+ * notification indicator).
  */
 @NgModule({
   declarations: [
@@ -19,7 +18,6 @@ import { AuthLayoutComponent } from './auth-layout/auth-layout.component';
     TopNavbarComponent,
     NotificationIndicatorComponent,
     GlobalSearchComponent,
-    AuthLayoutComponent,
   ],
   imports: [
     CommonModule,
@@ -31,7 +29,6 @@ import { AuthLayoutComponent } from './auth-layout/auth-layout.component';
     TopNavbarComponent,
     NotificationIndicatorComponent,
     GlobalSearchComponent,
-    AuthLayoutComponent,
   ],
 })
 export class LayoutModule { }

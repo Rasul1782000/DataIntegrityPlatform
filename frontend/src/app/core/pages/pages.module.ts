@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { NgChartsModule } from 'ng2-charts';
 
 import { ComponentsModule } from '../../components/components.module';
 
@@ -11,10 +12,6 @@ import { ReportsComponent } from './reports/reports.component';
 import { ThreatDetectionComponent } from './threat-detection/threat-detection.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 
-/**
- * Single module for all application pages.
- * Imports ComponentsModule so pages can use shared components, pipes and directives.
- */
 @NgModule({
   declarations: [
     DashboardComponent,
@@ -28,6 +25,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
   ],
   imports: [
     ComponentsModule,
+    NgChartsModule,
   ],
 })
 export class PagesModule { }
