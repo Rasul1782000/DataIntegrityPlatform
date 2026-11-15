@@ -20,7 +20,12 @@ class Settings(BaseSettings):
     secret_key: SecretStr | None = None
     storage_dir: Path = BACKEND_ROOT / "storage"
     database_url: str | None = None
-    cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:4200"])
+    cors_origins: list[str] = Field(
+        default_factory=lambda: [
+            "http://localhost:4200",
+            "http://127.0.0.1:4200",
+        ]
+    )
     access_token_minutes: int = Field(default=15, ge=1, le=60)
     refresh_token_days: int = Field(default=7, ge=1, le=90)
     bootstrap_admin_username: str | None = None
